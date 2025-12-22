@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cycle Metadata Schema",
+  "description": "Tracks cycle count for 10-cycle evaluations",
+  "type": "object",
+  "required": ["version", "cycle_count", "last_updated"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "cycle_count": {
+      "type": "integer",
+      "description": "Total number of completed Plan->Execute->Review cycles",
+      "minimum": 0
+    },
+    "last_evaluation_cycle": {
+      "type": "integer",
+      "description": "Cycle number when last 10-cycle evaluation was performed",
+      "minimum": 0
+    },
+    "next_evaluation_due": {
+      "type": "integer",
+      "description": "Cycle number when next evaluation should occur"
+    },
+    "cycle_history": {
+      "type": "array",
+      "description": "History of recent cycles",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cycle_number": {"type": "integer"},
+          "plan_id": {"type": "string"},
+          "execution_id": {"type": "string"},
+          "status": {
+            "type": "string",
+            "enum": ["completed", "failed", "replanned"]
+          },
+          "duration_seconds": {"type": "number"},
+          "steps_executed": {"type": "integer"},
+          "prompt_updates_made": {"type": "integer"},
+          "observations_recorded": {"type": "integer"},
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "evaluations": {
+      "type": "array",
+      "description": "Record of 10-cycle evaluations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "evaluation_number": {"type": "integer"},
+          "cycles_evaluated": {
+            "type": "array",
+            "items": {"type": "integer"},
+            "description": "Cycle numbers included in this evaluation"
+          },
+          "report_path": {
+            "type": "string",
+            "description": "Path to evaluation report markdown file"
+          },
+          "key_findings": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "systemic_improvements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "improvement_type": {
+                  "type": "string",
+                  "enum": ["workflow", "tool_usage", "error_handling", "prompt_structure", "context_gathering"]
+                },
+                "description": {"type": "string"},
+                "implemented": {"type": "boolean"}
+              }
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

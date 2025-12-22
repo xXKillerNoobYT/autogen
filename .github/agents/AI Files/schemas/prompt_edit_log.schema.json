@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Prompt Edit Log Schema",
+  "description": "JSONL schema for immutable audit trail of prompt edits. Each line is a separate JSON object.",
+  "type": "object",
+  "required": ["edit_id", "timestamp", "editor_agent", "edited_agent", "success"],
+  "properties": {
+    "edit_id": {
+      "type": "string",
+      "description": "Unique identifier for this edit operation",
+      "examples": ["edit_2025-01-10_14-30-45_001"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when edit occurred"
+    },
+    "editor_agent": {
+      "type": "string",
+      "enum": ["Smart Plan.agent.md", "Smart Execute.agent.md", "Smart Review.agent.md", "Full Auto.agent.md"],
+      "description": "Agent that performed the edit"
+    },
+    "edited_agent": {
+      "type": "string",
+      "enum": ["Smart Plan.agent.md", "Smart Execute.agent.md", "Smart Review.agent.md", "Full Auto.agent.md"],
+      "description": "Agent that was edited"
+    },
+    "section": {
+      "type": "string",
+      "description": "Section heading or identifier within the agent prompt"
+    },
+    "edit_type": {
+      "type": "string",
+      "enum": ["addition", "modification", "deletion", "refactor"],
+      "description": "Type of edit performed"
+    },
+    "old_content": {
+      "type": "string",
+      "description": "Content before edit (empty for additions)"
+    },
+    "new_content": {
+      "type": "string",
+      "description": "Content after edit (empty for deletions)"
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Why this edit was made - references observations or root causes"
+    },
+    "source": {
+      "type": "string",
+      "enum": ["prompt_update_proposal", "root_cause_analysis", "10_cycle_evaluation", "manual_intervention"],
+      "description": "What triggered this edit"
+    },
+    "source_id": {
+      "type": "string",
+      "description": "ID of plan/execution/evaluation that triggered edit"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence in this edit (0-1)"
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Whether edit was successfully applied"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Error details if success=false"
+    },
+    "backup_path": {
+      "type": "string",
+      "description": "Path to backup of original file before edit",
+      "examples": ["AI Files/old_versions/Smart Plan.agent.md.2025-01-10_14-30-45.bak"]
+    },
+    "validation": {
+      "type": "object",
+      "description": "Post-edit validation results",
+      "properties": {
+        "file_readable": {"type": "boolean"},
+        "yaml_valid": {"type": "boolean"},
+        "markdown_valid": {"type": "boolean"},
+        "validation_errors": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "cycle_number": {
+      "type": "integer",
+      "description": "Cycle number when this edit occurred"
+    }
+  }
+}

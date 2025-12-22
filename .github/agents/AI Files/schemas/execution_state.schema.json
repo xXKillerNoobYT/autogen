@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Execution State Schema",
+  "description": "Tracks execution progress through plan steps",
+  "type": "object",
+  "required": ["version", "execution_id", "plan_id", "current_step", "status", "timestamp"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "execution_id": {
+      "type": "string",
+      "description": "Unique ID for this execution session"
+    },
+    "plan_id": {
+      "type": "string",
+      "description": "Reference to plan being executed"
+    },
+    "current_step": {
+      "type": "integer",
+      "description": "Current step number being executed (0 = not started)",
+      "minimum": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": ["in-progress", "completed", "failed", "stalled"],
+      "description": "Overall execution status"
+    },
+    "steps": {
+      "type": "array",
+      "description": "Status of each step in the plan",
+      "items": {
+        "type": "object",
+        "required": ["step_number", "status"],
+        "properties": {
+          "step_number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in-progress", "completed", "failed", "skipped"]
+          },
+          "start_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "duration_seconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "tools_invoked": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "tool_name": {"type": "string"},
+                "parameters": {"type": "object"},
+                "result_status": {
+                  "type": "string",
+                  "enum": ["success", "error", "timeout"]
+                },
+                "error_message": {"type": "string"}
+              }
+            }
+          },
+          "output": {
+            "type": "string",
+            "description": "Result or output from this step"
+          },
+          "observations_recorded": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "IDs of observations added to MCP memory for this step"
+          }
+        }
+      }
+    },
+    "prompt_edits_executed": {
+      "type": "array",
+      "description": "Prompt updates executed during this session",
+      "items": {
+        "type": "object",
+        "required": ["target_agent", "edit_timestamp", "success"],
+        "properties": {
+          "edit_id": {"type": "string"},
+          "target_agent": {"type": "string"},
+          "section_edited": {"type": "string"},
+          "old_content": {"type": "string"},
+          "new_content": {"type": "string"},
+          "rationale": {"type": "string"},
+          "edit_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {"type": "boolean"},
+          "error_message": {"type": "string"}
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "description": "Errors encountered during execution",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step_number": {"type": "integer"},
+          "error_type": {"type": "string"},
+          "error_message": {"type": "string"},
+          "stack_trace": {"type": "string"},
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "recovery_attempted": {"type": "boolean"},
+          "recovery_successful": {"type": "boolean"}
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update time for this state file"
+    },
+    "agent_version": {
+      "type": "string",
+      "description": "Version of Smart Execute agent"
+    }
+  }
+}

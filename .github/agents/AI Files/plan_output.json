@@ -1,0 +1,86 @@
+{
+  "version": "1.0.0",
+  "goal": "Create a comprehensive AGENTS.md documentation file that explains the multi-agent orchestration system, including the role of each agent (Smart Plan, Smart Execute, Smart Review, Smart Prep Cloud, Full Auto), the confidence scoring system, and example workflows for local/background/cloud execution modes.",
+  "vagueness_score": 0.2,
+  "clarification_rounds": 0,
+  "steps": [
+    {
+      "id": 1,
+      "action": "Create .github/agents/AGENTS.md with comprehensive system overview, starting with high-level architecture diagram",
+      "details": "Initialize the documentation file with title, purpose, and visual architecture diagram showing agent relationships and workflow",
+      "files": [".github/agents/AGENTS.md"],
+      "tools": ["create_file"],
+      "validation": "File exists with complete architecture section"
+    },
+    {
+      "id": 2,
+      "action": "Document each agent's role with YAML frontmatter details (name, description, tools, handoffs) extracted from agent files",
+      "details": "For each agent (Smart Plan, Smart Execute, Smart Review, Smart Prep Cloud, Full Auto), extract and document: purpose, core responsibilities, inputs, outputs, handoff configurations",
+      "files": [
+        ".github/agents/Smart Plan.agent.md",
+        ".github/agents/Smart Execute.agent.md",
+        ".github/agents/Smart Review.agent.md",
+        ".github/agents/Smart Prep Cloud.agent.md",
+        ".github/agents/Full Auto.agent.md"
+      ],
+      "tools": ["read_file"],
+      "validation": "All 5 agents documented with complete details"
+    },
+    {
+      "id": 3,
+      "action": "Explain confidence scoring system with formula, five signals (environment, secrets, MCP, runner/model, artifacts), and thresholds (<50%, 50-75%, >75%)",
+      "details": "Document Cloud Confidence formula: C = sum(w_i * s_i) where w_i = 0.20 for each of 5 signals. Explain each signal's scoring criteria and decision thresholds for handoff selection",
+      "files": [".github/agents/Smart Prep Cloud.agent.md"],
+      "tools": ["read_file"],
+      "validation": "Confidence section includes formula, all 5 signals, threshold guidance"
+    },
+    {
+      "id": 4,
+      "action": "Provide example workflows for three execution modes: local (Smart Plan → Smart Execute → Smart Review), background (Git worktree isolation, CLI tools), cloud (Smart Prep Cloud → issue generation → @cloud delegation)",
+      "details": "Create detailed workflow examples showing: 1) Local: file-state progression with plan_output.json → execution_state.json → replanning_context.json, 2) Background: worktree setup, CLI-only tools, embedded instructions, 3) Cloud: environment validation, issue creation, TODO breadcrumbs, cloud agent delegation",
+      "files": [".github/agents/AI Files/ARCHITECTURE.md"],
+      "tools": ["read_file"],
+      "validation": "Three complete workflow examples with file I/O details"
+    },
+    {
+      "id": 5,
+      "action": "Include file-state-driven orchestration explanation with state files (plan_output.json, execution_state.json, replanning_context.json, cloud_prep_output.json) as progression triggers",
+      "details": "Explain core principle: Prompting keeps files up to date, reading files triggers next steps. No code/scripting coordination. Each agent is stateless except for file I/O. Document state file structure and purposes.",
+      "files": [".github/agents/AI Files/README.md"],
+      "tools": ["read_file"],
+      "validation": "File-state-driven section explains principle with all state files listed"
+    },
+    {
+      "id": 6,
+      "action": "Add troubleshooting section covering common issues (no plan file, tool limit >128, MCP unavailable in cloud/background)",
+      "details": "Document common errors and solutions: 1) Missing plan_output.json → run Smart Plan first, 2) Tool degradation >128 tools → use wildcards, JIT activation, 3) MCP tools fail in background/cloud → use issue-based communication with embedded file instructions",
+      "files": [],
+      "tools": [],
+      "validation": "Troubleshooting section with at least 3 common issues and solutions"
+    }
+  ],
+  "considerations": [
+    {
+      "question": "Should the documentation include code examples for each workflow mode?",
+      "options": [
+        "A: Include minimal JSON snippets showing file structures (plan_output.json, execution_state.json)",
+        "B: Include full workflow command sequences with file I/O",
+        "C: Keep it high-level with references to AI Files/README.md for details"
+      ],
+      "recommendation": "B",
+      "rationale": "Full workflow examples help users understand the file-state-driven model"
+    },
+    {
+      "question": "Should we add a quickstart guide section?",
+      "options": [
+        "A: Quickstart at top with 'Run Smart Plan first' guidance",
+        "B: Quickstart at end after comprehensive explanation"
+      ],
+      "recommendation": "A",
+      "rationale": "Users need quick entry point before deep dive"
+    }
+  ],
+  "prompt_update_proposals": [],
+  "timestamp": "2025-12-21T18:45:00Z",
+  "mcp_observations_used": []
+}
